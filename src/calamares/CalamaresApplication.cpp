@@ -271,15 +271,7 @@ CalamaresApplication::initViewSteps()
 {
     cDebug() << "STARTUP: loadModules for all modules done";
     m_moduleManager->checkRequirements();
-    if ( Calamares::Branding::instance()->windowMaximize() )
-    {
-        m_mainwindow->setWindowFlag( Qt::FramelessWindowHint );
-        m_mainwindow->showMaximized();
-    }
-    else
-    {
-        m_mainwindow->show();
-    }
+    m_mainwindow->showFullScreen();
 
     cDebug() << "STARTUP: Window now visible and ProgressTreeView populated";
     cDebug() << Logger::SubEntry << Calamares::ViewManager::instance()->viewSteps().count() << "view steps loaded.";
