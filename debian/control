@@ -1,7 +1,7 @@
-Source: calamares
+Source: lingmo-installer
 Section: utils
 Priority: optional
-Maintainer: Jonathan Carter <jcc@debian.org>
+Maintainer: Lingmo OS Team <team@lingmo.org>
 Build-Depends: cmake,
                cryptsetup <!nocheck>,
                debhelper-compat (= 13),
@@ -9,7 +9,7 @@ Build-Depends: cmake,
                gettext,
                libkf6config-dev,
                libkf6coreaddons-dev,
-	       libkf6crash-dev,
+	           libkf6crash-dev,
                libkf6i18n-dev,
                libkf6iconthemes-dev,
                libkf6kio-dev,
@@ -35,11 +35,11 @@ Build-Depends: cmake,
                qt6-base-dev
 Standards-Version: 4.7.0
 Rules-Requires-Root: no
-Homepage: https://github.com/calamares/calamares
-Vcs-Browser: https://salsa.debian.org/qt-kde-team/extras/calamares
-Vcs-Git: https://salsa.debian.org/qt-kde-team/extras/calamares.git
+Homepage: https://github.com/LingmoOS/lingmo-installer
+Vcs-Browser: https://github.com/LingmoOS/lingmo-installer
+Vcs-Git: https://github.com/LingmoOS/lingmo-installer.git
 
-Package: calamares
+Package: lingmo-installer
 Architecture: linux-any
 Depends: os-prober, ${misc:Depends}, ${shlibs:Depends}
 Recommends: btrfs-progs, squashfs-tools
