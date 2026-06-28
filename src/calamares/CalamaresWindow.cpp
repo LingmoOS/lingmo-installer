@@ -416,8 +416,8 @@ CalamaresWindow::CalamaresWindow( QWidget* parent )
     // Center card with rounded corners
     QWidget* card = createCardWidget( m_viewManager->centralWidget(), sideBox, navigation );
 
-    int cardW = qMin( static_cast<int>(availableSize.width() * 0.72), availableSize.width() - 100 );
-    int cardH = qMin( cardW * 10 / 16, availableSize.height() - 80 );
+    int cardW = qMin( static_cast<int>(availableSize.width() * 0.60), availableSize.width() - 100 );
+    int cardH = qBound( 480, card->minimumSizeHint().height(), static_cast<int>(availableSize.height() * 0.78) );
     int cardX = ( availableSize.width() - cardW ) / 2;
     int cardY = ( availableSize.height() - cardH ) / 2;
     card->setGeometry( cardX, cardY, cardW, cardH );
@@ -592,10 +592,9 @@ CalamaresWindow::ensureSize( QSize size )
         return;
     }
 
-    int newCardW = m_cardWidget->width();
-    int newCardH = qMin( newCardW * 10 / 16, availableSize.height() - 80 );
+    int newCardH = qMin( m_cardWidget->height() + embiggenment, availableSize.height() - 80 );
     int newCardY = ( availableSize.height() - newCardH ) / 2;
-    m_cardWidget->setGeometry( m_cardWidget->x(), newCardY, newCardW, newCardH );
+    m_cardWidget->setGeometry( m_cardWidget->x(), newCardY, m_cardWidget->width(), newCardH );
 }
 
 void
