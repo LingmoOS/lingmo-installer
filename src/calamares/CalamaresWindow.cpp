@@ -47,11 +47,8 @@
 static QSize
 desktopSize( QWidget* w )
 {
-#if QT_VERSION < QT_VERSION_CHECK( 6, 0, 0 )
-    return qApp->desktop()->availableGeometry( w ).size();
-#else
-    return w->screen()->availableGeometry().size();
-#endif
+    Q_UNUSED( w )
+    return qApp->primaryScreen()->geometry().size();
 }
 
 /** @brief Expected orientation of the panels, based on their side
