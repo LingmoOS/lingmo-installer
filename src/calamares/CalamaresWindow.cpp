@@ -44,11 +44,37 @@
 #endif
 #include <QTreeView>
 
+/// Card layout constants: the installer is a centered rounded card, so its size
+/// has to be bounded on both ends - very wide screens would otherwise stretch
+/// the pages, and short (or HiDPI-scaled) screens would push the navigation bar
+/// off the bottom.
+static constexpr double CARD_WIDTH_RATIO = 0.60;
+static constexpr int CARD_WIDTH_MIN = 720;
+static constexpr int CARD_WIDTH_MAX = 1100;
+static constexpr int CARD_MARGIN = 80;
+static constexpr double CARD_HEIGHT_RATIO = 0.86;
+static constexpr int CARD_HEIGHT_MIN = 480;
+
+static inline int
+cardWidth( const QSize& available )
+{
+    const int maxW = qMin( CARD_WIDTH_MAX, qMax( 320, available.width() - CARD_MARGIN ) );
+    const int minW = qMin( CARD_WIDTH_MIN, maxW );
+    return qBound( minW, static_cast< int >( available.width() * CARD_WIDTH_RATIO ), maxW );
+}
+
+static inline int
+cardMaxHeight( const QSize& available )
+{
+    return static_cast< int >( available.height() * CARD_HEIGHT_RATIO );
+}
+
 static QSize
 desktopSize( QWidget* w )
 {
     Q_UNUSED( w )
-    return qApp->primaryScreen()->geometry().size();
+    // availableGeometry() (not geometry()) so panels/docks are not covered
+    return qApp->primaryScreen()->availableGeometry().size();
 }
 
 /** @brief Expected orientation of the panels, based on their side
@@ -413,8 +439,10 @@ CalamaresWindow::CalamaresWindow( QWidget* parent )
     // Center card with rounded corners
     QWidget* card = createCardWidget( m_viewManager->centralWidget(), sideBox, navigation );
 
-    int cardW = qMin( static_cast<int>(availableSize.width() * 0.60), availableSize.width() - 100 );
-    int cardH = qBound( 480, card->minimumSizeHint().height(), static_cast<int>(availableSize.height() * 0.78) );
+    const int cardW = cardWidth( availableSize );
+    const int maxH = cardMaxHeight( availableSize );
+    // the lower bound must never exceed the upper one (short screens!)
+    int cardH = qBound( qMin( CARD_HEIGHT_MIN, maxH ), card->minimumSizeHint().height(), maxH );
     int cardX = ( availableSize.width() - cardW ) / 2;
     int cardY = ( availableSize.height() - cardH ) / 2;
     card->setGeometry( cardX, cardY, cardW, cardH );
@@ -589,7 +617,7 @@ CalamaresWindow::ensureSize( QSize size )
         return;
     }
 
-    int newCardH = qMin( m_cardWidget->height() + embiggenment, availableSize.height() - 80 );
+    int newCardH = qMin( m_cardWidget->height() + embiggenment, cardMaxHeight( availableSize ) );
     int newCardY = ( availableSize.height() - newCardH ) / 2;
     m_cardWidget->setGeometry( m_cardWidget->x(), newCardY, m_cardWidget->width(), newCardH );
 }

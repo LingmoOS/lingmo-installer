@@ -1,3 +1,20 @@
+lingmo-installer (5.0.6.lingmo.1) unstable; urgency=medium
+
+  * Bound the installer card on both ends. The width was min(60% of the screen,
+    screen-100) with no upper limit, so a 4K screen produced a 2304px wide card,
+    and the height used qBound(480, content, 78% of the screen), whose lower
+    bound wins on short or HiDPI-scaled screens (1024x600, or 911x512 logical at
+    150%) and leaves the card covering 93-94% of the screen with the navigation
+    bar at risk of falling off the bottom.
+  * cardWidth() clamps to [720, min(1100, screen-80)] and cardMaxHeight() to 86%
+    of the screen; the height lower bound is now min(480, maxH) so it can never
+    exceed the upper bound. ensureSize() uses the same limit, so both code paths
+    agree.
+  * desktopSize() now uses availableGeometry() instead of geometry() so panels
+    and docks are not covered.
+
+ -- Lingmo OS Team <team@lingmo.org>  Wed, 14 Oct 2026 23:40:08 +0800
+
 lingmo-installer (5.0.5.lingmo.1) unstable; urgency=medium
 
   * New release for Lingmo OS.
