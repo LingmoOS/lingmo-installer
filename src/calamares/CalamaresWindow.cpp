@@ -35,6 +35,7 @@
 #include <QGraphicsBlurEffect>
 #include <QLabel>
 #include <QPainter>
+#include <QResizeEvent>
 #include <QScreen>
 #ifdef WITH_QML
 #include <QQmlContext>
@@ -464,11 +465,19 @@ CalamaresWindow::setupBlurredBackground()
     const auto* branding = Calamares::Branding::instance();
     using ImageEntry = Calamares::Branding::ImageEntry;
 
-    QSize screenSize = desktopSize( this );
+    // The window is normally as large as the desktop, but it does not have to
+    // be (resolution change, compositor constraints, several screens) and the
+    // background has to cover it in any case. So the pixmaps are built once,
+    // for the desktop size, while the labels take the *window* geometry and
+    // stretch whatever pixmap they are given; resizeEvent() keeps the geometry
+    // in sync. Nothing is regenerated when the window changes size.
+    const QSize screenSize = desktopSize( this );
+    const QRect windowRect = rect();
 
     m_backgroundLabel = new QLabel( this );
-    m_backgroundLabel->setGeometry( QRect( QPoint( 0, 0 ), screenSize ) );
     m_backgroundLabel->setObjectName( "installerBackground" );
+    m_backgroundLabel->setScaledContents( true );
+    m_backgroundLabel->setGeometry( windowRect );
 
     QString wallpaperPath = branding->imagePath( ImageEntry::ProductWallpaper );
     if ( !wallpaperPath.isEmpty() )
@@ -496,7 +505,8 @@ CalamaresWindow::setupBlurredBackground()
     }
     else
     {
-        // Dark gradient fallback
+        // Dark gradient fallback. Stretching a vertical linear gradient does
+        // not change how it looks, so it is drawn once and never redrawn.
         QPixmap gradientPix( screenSize );
         QPainter p( &gradientPix );
         QLinearGradient g( 0, 0, 0, screenSize.height() );
@@ -509,10 +519,10 @@ CalamaresWindow::setupBlurredBackground()
     }
 
     // Semi-transparent overlay for readability
-    QLabel* overlay = new QLabel( this );
-    overlay->setGeometry( QRect( QPoint( 0, 0 ), screenSize ) );
-    overlay->setStyleSheet( "background: rgba(0, 0, 0, 0.25);" );
-    overlay->lower();
+    m_overlayLabel = new QLabel( this );
+    m_overlayLabel->setGeometry( windowRect );
+    m_overlayLabel->setStyleSheet( "background: rgba(0, 0, 0, 0.25);" );
+    m_overlayLabel->lower();
     m_backgroundLabel->lower();
 }
 
@@ -620,6 +630,26 @@ CalamaresWindow::ensureSize( QSize size )
     int newCardH = qMin( m_cardWidget->height() + embiggenment, cardMaxHeight( availableSize ) );
     int newCardY = ( availableSize.height() - newCardH ) / 2;
     m_cardWidget->setGeometry( m_cardWidget->x(), newCardY, m_cardWidget->width(), newCardH );
+}
+
+void
+CalamaresWindow::resizeEvent( QResizeEvent* event )
+{
+    QWidget::resizeEvent( event );
+
+    // Background and overlay are hand-positioned children (the window itself
+    // has no layout), so they do not follow the window size by themselves.
+    // Only their geometry is updated here - the pixmaps are merely stretched by
+    // the labels, so no expensive blur / rescale work happens on resize.
+    const QRect windowRect = rect();
+    if ( m_backgroundLabel )
+    {
+        m_backgroundLabel->setGeometry( windowRect );
+    }
+    if ( m_overlayLabel )
+    {
+        m_overlayLabel->setGeometry( windowRect );
+    }
 }
 
 void

@@ -16,6 +16,7 @@
 #include <memory>
 
 class QLabel;
+class QResizeEvent;
 
 namespace Calamares
 {
@@ -38,6 +39,7 @@ public Q_SLOTS:
 
 protected:
     virtual void closeEvent( QCloseEvent* e ) override;
+    virtual void resizeEvent( QResizeEvent* e ) override;
 
 private:
     void setupBlurredBackground();
@@ -46,6 +48,7 @@ private:
     Calamares::DebugWindowManager* m_debugManager = nullptr;
     Calamares::ViewManager* m_viewManager = nullptr;
     QLabel* m_backgroundLabel = nullptr;
+    QLabel* m_overlayLabel = nullptr;
     QWidget* m_cardWidget = nullptr;
 };
 
