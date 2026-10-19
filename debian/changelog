@@ -1,3 +1,12 @@
+lingmo-installer (5.0.7.lingmo.1) unstable; urgency=medium
+
+  * 安装器背景跟随窗口尺寸，修复改分辨率后底部露白。
+    背景与遮罩此前按 desktopSize() 固定几何，窗口尺寸与之不同时覆盖不全；
+    现改为按 rect() 设置几何，并在 resizeEvent 中同步，pixmap 用
+    setScaledContents 拉伸，不在 resize 时重建。
+
+ -- Lingmo OS Team <team@lingmo.org>  Mon, 19 Oct 2026 12:53:21 +0800
+
 lingmo-installer (5.0.6.lingmo.1) unstable; urgency=medium
 
   * Bound the installer card on both ends. The width was min(60% of the screen,
