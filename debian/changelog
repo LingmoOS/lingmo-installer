@@ -1,3 +1,20 @@
+lingmo-installer (5.0.8.lingmo.1) unstable; urgency=medium
+
+  * installer: add users page and lingmo-dm display manager support.
+  * settings.conf: enable users module in show and exec sequences so the
+    installer collects username and password during installation.
+  * displaymanager/main.py: add DMlingmodm class that writes
+    /etc/lingmo-dm.conf with Session=lingmo-oobe for first-boot autologin.
+    OOBE switches it to lingmo-wayland on completion.
+  * displaymanager/displaymanager.conf: add lingmo-dm as first entry in
+    displaymanagers list so it takes priority when installed.
+  * users.conf: switch sudoersGroup wheel→sudo (Debian standard), replace
+    defaultGroups with Debian standard groups (sudo, audio, video, cdrom,
+    dip, plugdev, netdev, bluetooth), disable root password and reuse.
+    Comment out autologinGroup (not needed on Debian with lingmo-dm).
+
+ -- Lingmo OS Team <team@lingmo.org>  Thu, 05 Nov 2026 08:00:00 +0800
+
 lingmo-installer (5.0.7.lingmo.1) unstable; urgency=medium
 
   * 安装器背景跟随窗口尺寸，修复改分辨率后底部露白。

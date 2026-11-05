@@ -919,6 +919,41 @@ class DMsysconfig(DisplayManager):
         return os.path.exists(config)
 
 
+class DMlingmodm(DisplayManager):
+    """
+    Lingmo DM — writes /etc/lingmo-dm.conf with an [Autologin] section.
+    The first-boot session is lingmo-oobe; OOBE switches it to lingmo-wayland
+    on completion.
+    """
+    name = "lingmo-dm"
+    executable = "lingmo-dm"
+
+    def basic_setup(self):
+        pass
+
+    def desktop_environment_setup(self, desktop_environment):
+        pass
+
+    def greeter_setup(self):
+        pass
+
+    def set_autologin(self, username, do_autologin, default_desktop_environment):
+        conf_path = os.path.join(self.root_mount_point, "etc/lingmo-dm.conf")
+        if do_autologin and username:
+            # First-boot session is lingmo-oobe; OOBE will switch to lingmo-wayland
+            # on completion.
+            with open(conf_path, 'w') as f:
+                f.write("[Autologin]\n")
+                f.write("User={}\n".format(username))
+                f.write("Session=lingmo-oobe\n")
+        else:
+            # No autologin: remove any existing autologin config.
+            try:
+                os.remove(conf_path)
+            except FileNotFoundError:
+                pass
+
+
 # Collect all the subclasses of DisplayManager defined above,
 # and index them based on the name property of each class.
 display_managers = [
