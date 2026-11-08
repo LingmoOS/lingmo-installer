@@ -1,3 +1,9 @@
+lingmo-installer (5.0.8.lingmo.2) unstable; urgency=medium
+
+  * Record the installed account and login preference for first-boot setup.
+
+ -- Lingmo OS Team <team@lingmo.org>  Sun, 08 Nov 2026 12:00:00 +0800
+
 lingmo-installer (5.0.8.lingmo.1) unstable; urgency=medium
 
   * installer: add users page and lingmo-dm display manager support.
