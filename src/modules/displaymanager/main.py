@@ -920,11 +920,7 @@ class DMsysconfig(DisplayManager):
 
 
 class DMlingmodm(DisplayManager):
-    """
-    Lingmo DM — writes /etc/lingmo-dm.conf with an [Autologin] section.
-    The first-boot session is lingmo-oobe; OOBE switches it to lingmo-wayland
-    on completion.
-    """
+    """Start the installed desktop directly and honor the login preference."""
     name = "lingmo-dm"
     executable = "lingmo-dm"
 
@@ -941,24 +937,15 @@ class DMlingmodm(DisplayManager):
         import configparser
         username = libcalamares.globalstorage.value("username") or username
         if not username:
-            raise ValueError("Lingmo first-boot setup requires the installed user")
-        # First boot temporarily enters OOBE; completion restores the user's
-        # long-term automatic-login choice without guessing an account.
-        state_path = os.path.join(self.root_mount_point, "etc/lingmo-oobe-account.conf")
-        state = configparser.ConfigParser()
-        state.optionxform = str
-        state["Account"] = {"User": username, "Autologin": "true" if do_autologin else "false"}
-        with open(state_path, "w") as stream:
-            state.write(stream)
-        os.chmod(state_path, 0o600)
+            raise ValueError("Lingmo DM requires the installed user")
         conf_path = os.path.join(self.root_mount_point, "etc/lingmo-dm.conf")
         config = configparser.ConfigParser()
         config.optionxform = str
         config.read(conf_path)
         if not config.has_section("Autologin"):
             config.add_section("Autologin")
-        config.set("Autologin", "User", username)
-        config.set("Autologin", "Session", "lingmo-oobe")
+        config.set("Autologin", "User", username if do_autologin else "")
+        config.set("Autologin", "Session", "lingmo-wayland")
         with open(conf_path, "w") as stream:
             config.write(stream)
 

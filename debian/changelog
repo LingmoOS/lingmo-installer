@@ -1,3 +1,9 @@
+lingmo-installer (5.0.8.lingmo.3) unstable; urgency=medium
+
+  * Start the installed Wayland session directly and honor automatic login.
+
+ -- Lingmo OS Team <team@lingmo.org>  Mon, 09 Nov 2026 12:00:00 +0800
+
 lingmo-installer (5.0.8.lingmo.2) unstable; urgency=medium
 
   * Record the installed account and login preference for first-boot setup.
